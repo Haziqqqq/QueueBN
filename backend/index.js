@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const { Pool } = require('pg')
 require('dotenv').config()
+const { notifyApproaching, notifyNext, notifyExpired } = require('./notificationService')
 
 const app = express()
 app.use(cors({ origin: [process.env.FRONTEND_URL, 'http://localhost:3000'] }))
@@ -305,4 +306,49 @@ app.get('/admin/analytics', async (req, res) => {
 })
 
 const PORT = process.env.PORT || 4000
+
+setInterval(async () => {
+  try {
+    const departments = await db.query('SELECT * FROM departments WHERE is_open = true')
+    for (const dept of departments.rows) {
+      const tickets = await db.query(`
+        SELECT * FROM tickets
+        WHERE department_id = $1
+          AND status = 'waiting'
+          AND joined_at::date = CURRENT_DATE
+        ORDER BY position ASC
+      `, [dept.id])
+
+      for (let i = 0; i < tickets.rows.length; i++) {
+        const ticket = tickets.rows[i]
+        const peopleAhead = i
+
+        if (peopleAhead === 2 && !ticket.notif_3_sent) {
+          await notifyApproaching(ticket, dept.name, peopleAhead)
+          await db.query('UPDATE tickets SET notif_3_sent = true WHERE id = $1', [ticket.id])
+        }
+
+        if (peopleAhead === 0 && !ticket.notif_1_sent) {
+          await notifyNext(ticket, dept.name)
+          await db.query('UPDATE tickets SET notif_1_sent = true WHERE id = $1', [ticket.id])
+        }
+      }
+
+      const expired = await db.query(`
+        SELECT t.*, d.name as dept_name FROM tickets t
+        JOIN departments d ON d.id = t.department_id
+        WHERE t.status = 'called'
+          AND t.called_at < NOW() - INTERVAL '10 minutes'
+          AND t.joined_at::date = CURRENT_DATE
+      `)
+      for (const ticket of expired.rows) {
+        await notifyExpired(ticket, ticket.dept_name)
+        await db.query('UPDATE tickets SET status = $1 WHERE id = $2', ['no_show', ticket.id])
+      }
+    }
+  } catch (err) {
+    console.error('Notification job error:', err.message)
+  }
+}, 30000)
+
 app.listen(PORT, () => console.log(`QueueBN backend running on port ${PORT}`))
