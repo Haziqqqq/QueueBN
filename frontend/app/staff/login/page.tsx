@@ -17,10 +17,12 @@ export default function StaffLogin() {
 
     // Simple hardcoded auth for demo — replace with Supabase Auth later
     const staffAccounts: Record<string, { name: string; department_id: string; department: string; role: string }> = {
-      'opd@ripas.gov.bn': { name: 'OPD Staff', department_id: '', department: 'OPD General', role: 'staff' },
-      'pharmacy@ripas.gov.bn': { name: 'Pharmacy Staff', department_id: '', department: 'Pharmacy', role: 'staff' },
-      'lab@ripas.gov.bn': { name: 'Laboratory Staff', department_id: '', department: 'Laboratory', role: 'staff' },
-      'admin@ripas.gov.bn': { name: 'Admin', department_id: '', department: 'all', role: 'admin' },
+    'opd@ripas.gov.bn': { name: 'OPD Staff', department_id: '', department: 'OPD General', role: 'staff' },
+    'pharmacy@ripas.gov.bn': { name: 'Pharmacy Staff', department_id: '', department: 'Pharmacy', role: 'staff' },
+    'lab@ripas.gov.bn': { name: 'Laboratory Staff', department_id: '', department: 'Laboratory', role: 'staff' },
+    'radiology@ripas.gov.bn': { name: 'Radiology Staff', department_id: '', department: 'Radiology', role: 'staff' },
+    'emergency@ripas.gov.bn': { name: 'Emergency Staff', department_id: '', department: 'Emergency Triage', role: 'staff' },
+    'admin@ripas.gov.bn': { name: 'Admin', department_id: '', department: 'all', role: 'admin' },
     }
 
     if (password !== 'ripas2026') {
@@ -117,7 +119,7 @@ export default function StaffLogin() {
         <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-xl">
           <p className="text-xs font-semibold text-blue-700 mb-2">Demo Accounts (password: ripas2026)</p>
           <div className="space-y-1">
-            {['opd@ripas.gov.bn', 'pharmacy@ripas.gov.bn', 'lab@ripas.gov.bn', 'admin@ripas.gov.bn'].map(acc => (
+            {['opd@ripas.gov.bn', 'pharmacy@ripas.gov.bn', 'lab@ripas.gov.bn', 'radiology@ripas.gov.bn', 'emergency@ripas.gov.bn', 'admin@ripas.gov.bn'].map(acc => (
               <button
                 key={acc}
                 onClick={() => setEmail(acc)}
