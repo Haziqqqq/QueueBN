@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
-  Hospital, Users, Clock, CheckCircle, XCircle,
+  Ticket, Users, Clock, CheckCircle, XCircle,
   RefreshCw, LogOut, Megaphone, TrendingUp,
   PauseCircle, PlayCircle, Star, ArrowUpRight
 } from 'lucide-react'
@@ -108,11 +108,11 @@ export default function AdminDashboard() {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Hospital size={18} className="text-white" />
+              <Ticket size={18} className="text-white" />
             </div>
             <div>
               <div className="text-sm font-bold text-slate-800">QueueBN Admin</div>
-              <div className="text-xs text-slate-400">RIPAS Hospital — All Departments</div>
+              <div className="text-xs text-slate-400">All Queues</div>
             </div>
           </div>
           <div className="flex items-center gap-4">

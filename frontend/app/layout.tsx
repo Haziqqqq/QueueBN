@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: 'QueueBN - RIPAS Hospital Virtual Queue',
-  description: 'Skip the waiting room. Join the RIPAS Hospital queue from anywhere and get notified on WhatsApp when your turn is near.',
+  title: 'QueueBN - Virtual Queue System',
+  description: 'Skip the line. Join a queue from anywhere and get notified on WhatsApp when your turn is near.',
 }
 
 export default function RootLayout({

@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Hospital, Lock, Mail, ArrowRight } from 'lucide-react'
+import { Ticket, Lock, Mail, ArrowRight } from 'lucide-react'
 
 export default function StaffLogin() {
   const router = useRouter()
@@ -17,15 +17,15 @@ export default function StaffLogin() {
 
     // Simple hardcoded auth for demo — replace with Supabase Auth later
     const staffAccounts: Record<string, { name: string; department_id: string; department: string; role: string }> = {
-    'opd@ripas.gov.bn': { name: 'OPD Staff', department_id: '', department: 'OPD General', role: 'staff' },
-    'pharmacy@ripas.gov.bn': { name: 'Pharmacy Staff', department_id: '', department: 'Pharmacy', role: 'staff' },
-    'lab@ripas.gov.bn': { name: 'Laboratory Staff', department_id: '', department: 'Laboratory', role: 'staff' },
-    'radiology@ripas.gov.bn': { name: 'Radiology Staff', department_id: '', department: 'Radiology', role: 'staff' },
-    'emergency@ripas.gov.bn': { name: 'Emergency Staff', department_id: '', department: 'Emergency Triage', role: 'staff' },
-    'admin@ripas.gov.bn': { name: 'Admin', department_id: '', department: 'all', role: 'admin' },
+    'service@queuebn.app': { name: 'Customer Service Staff', department_id: '', department: 'Customer Service', role: 'staff' },
+    'billing@queuebn.app': { name: 'Billing Staff', department_id: '', department: 'Billing & Payments', role: 'staff' },
+    'accounts@queuebn.app': { name: 'Account Services Staff', department_id: '', department: 'Account Services', role: 'staff' },
+    'collections@queuebn.app': { name: 'Collections Staff', department_id: '', department: 'Collections & Pickup', role: 'staff' },
+    'enquiries@queuebn.app': { name: 'Enquiries Staff', department_id: '', department: 'General Enquiries', role: 'staff' },
+    'admin@queuebn.app': { name: 'Admin', department_id: '', department: 'all', role: 'admin' },
     }
 
-    if (password !== 'ripas2026') {
+    if (password !== 'queuebn2026') {
       setError('Invalid email or password')
       setLoading(false)
       return
@@ -64,10 +64,10 @@ export default function StaffLogin() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <Hospital size={24} className="text-white" />
+            <Ticket size={24} className="text-white" />
           </div>
           <h1 className="text-xl font-bold text-slate-800">QueueBN Staff Portal</h1>
-          <p className="text-sm text-slate-500 mt-1">Sign in to manage your department queue</p>
+          <p className="text-sm text-slate-500 mt-1">Sign in to manage your queue</p>
         </div>
 
         {/* Form */}
@@ -78,7 +78,7 @@ export default function StaffLogin() {
             </label>
             <input
               type="email"
-              placeholder="opd@ripas.gov.bn"
+              placeholder="service@queuebn.app"
               value={email}
               onChange={e => setEmail(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && login()}
@@ -117,9 +117,9 @@ export default function StaffLogin() {
 
         {/* Demo accounts */}
         <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-xl">
-          <p className="text-xs font-semibold text-blue-700 mb-2">Demo Accounts (password: ripas2026)</p>
+          <p className="text-xs font-semibold text-blue-700 mb-2">Demo Accounts (password: queuebn2026)</p>
           <div className="space-y-1">
-            {['opd@ripas.gov.bn', 'pharmacy@ripas.gov.bn', 'lab@ripas.gov.bn', 'radiology@ripas.gov.bn', 'emergency@ripas.gov.bn', 'admin@ripas.gov.bn'].map(acc => (
+            {['service@queuebn.app', 'billing@queuebn.app', 'accounts@queuebn.app', 'collections@queuebn.app', 'enquiries@queuebn.app', 'admin@queuebn.app'].map(acc => (
               <button
                 key={acc}
                 onClick={() => setEmail(acc)}
