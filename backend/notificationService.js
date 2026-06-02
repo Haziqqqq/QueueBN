@@ -1,14 +1,24 @@
 const twilio = require('twilio')
 require('dotenv').config()
 
-const client = twilio(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
-)
+let client = null
+
+function getTwilioClient() {
+  const sid = process.env.TWILIO_ACCOUNT_SID
+  const token = process.env.TWILIO_AUTH_TOKEN
+  if (!sid?.startsWith('AC') || !token) return null
+  if (!client) client = twilio(sid, token)
+  return client
+}
 
 async function sendWhatsApp(to, message) {
+  const twilioClient = getTwilioClient()
+  if (!twilioClient) {
+    console.log('WhatsApp skipped (Twilio not configured)')
+    return
+  }
   try {
-    await client.messages.create({
+    await twilioClient.messages.create({
       from: process.env.TWILIO_WHATSAPP_FROM,
       to: `whatsapp:${to}`,
       body: message

@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Hospital, Users, Clock, ArrowRight, Smartphone, Bell, MapPin, RefreshCw } from 'lucide-react'
+import { Ticket, Users, Clock, ArrowRight, Smartphone, Bell, MapPin, RefreshCw } from 'lucide-react'
 
 interface Department {
   id: string
@@ -14,22 +14,22 @@ interface Department {
   called_count: string
 }
 
-const deptIcons: Record<string, React.ReactNode> = {
-  OPD: <Hospital size={22} />,
-  SPC: <Hospital size={22} />,
-  PHR: <Hospital size={22} />,
-  LAB: <Hospital size={22} />,
-  RAD: <Hospital size={22} />,
-  EMG: <Hospital size={22} />,
-}
+// Domain-neutral palette. Colors are assigned by hashing the queue code so each
+// queue looks distinct and stable, without assuming any specific set of codes.
+const palette: { bg: string; color: string; border: string }[] = [
+  { bg: '#EFF6FF', color: '#1D4ED8', border: '#BFDBFE' },
+  { bg: '#F5F3FF', color: '#6D28D9', border: '#DDD6FE' },
+  { bg: '#ECFDF5', color: '#047857', border: '#A7F3D0' },
+  { bg: '#FFF7ED', color: '#9A3412', border: '#FED7AA' },
+  { bg: '#FDF4FF', color: '#86198F', border: '#F0ABFC' },
+  { bg: '#FEF2F2', color: '#991B1B', border: '#FECACA' },
+  { bg: '#F0FDFA', color: '#0F766E', border: '#99F6E4' },
+]
 
-const deptColors: Record<string, { bg: string; color: string; border: string }> = {
-  OPD: { bg: '#EFF6FF', color: '#1D4ED8', border: '#BFDBFE' },
-  SPC: { bg: '#F5F3FF', color: '#6D28D9', border: '#DDD6FE' },
-  PHR: { bg: '#ECFDF5', color: '#065F46', border: '#A7F3D0' },
-  LAB: { bg: '#FFF7ED', color: '#9A3412', border: '#FED7AA' },
-  RAD: { bg: '#FDF4FF', color: '#86198F', border: '#F0ABFC' },
-  EMG: { bg: '#FEF2F2', color: '#991B1B', border: '#FECACA' },
+const styleFor = (key: string) => {
+  let hash = 0
+  for (let i = 0; i < key.length; i++) hash = (hash * 31 + key.charCodeAt(i)) & 0x7fffffff
+  return palette[key.length ? hash % palette.length : 0]
 }
 
 export default function Home() {
@@ -65,11 +65,11 @@ export default function Home() {
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 bg-white/20 rounded-lg flex items-center justify-center">
-                <Hospital size={18} className="text-white" />
+                <Ticket size={18} className="text-white" />
               </div>
               <div>
                 <div className="text-base font-bold tracking-tight">QueueBN</div>
-                <div className="text-xs text-blue-200">RIPAS Hospital Virtual Queue</div>
+                <div className="text-xs text-blue-200">Virtual Queue System</div>
               </div>
             </div>
             <Link href="/staff/login" className="text-sm text-blue-200 hover:text-white transition-colors flex items-center gap-1">
@@ -78,10 +78,10 @@ export default function Home() {
           </div>
 
           <h1 className="text-3xl font-bold tracking-tight leading-tight mb-3">
-            Skip the waiting room.<br />Join from anywhere.
+            Skip the line.<br />Join from anywhere.
           </h1>
           <p className="text-blue-100 text-sm font-light max-w-md leading-relaxed">
-            Select your department, join the virtual queue, and receive a WhatsApp notification when your turn is approaching.
+            Select a queue, join it from your phone, and receive a WhatsApp notification when your turn is approaching.
           </p>
 
           <div className="flex gap-4 mt-6">
@@ -91,7 +91,7 @@ export default function Home() {
             </div>
             <div className="bg-white/15 rounded-xl px-5 py-3">
               <div className="text-2xl font-semibold font-mono">{openDepts}</div>
-              <div className="text-xs text-blue-200 mt-0.5">departments open</div>
+              <div className="text-xs text-blue-200 mt-0.5">queues open</div>
             </div>
           </div>
         </div>
@@ -102,7 +102,7 @@ export default function Home() {
 
         {/* Section header */}
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-semibold text-slate-800">Select a Department</h2>
+          <h2 className="text-base font-semibold text-slate-800">Select a queue</h2>
           <button
             onClick={fetchDepartments}
             className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 transition-colors"
@@ -117,7 +117,7 @@ export default function Home() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
             {departments.map(dept => {
-              const style = deptColors[dept.code] || { bg: '#F8FAFC', color: '#334155', border: '#E2E8F0' }
+              const style = styleFor(dept.code || dept.name)
               const waiting = parseInt(dept.waiting_count || '0')
               const estimatedWait = waiting * dept.avg_service_time_mins
 
@@ -137,7 +137,7 @@ export default function Home() {
                         className="w-11 h-11 rounded-lg flex items-center justify-center"
                         style={{ background: style.bg, color: style.color }}
                       >
-                        {deptIcons[dept.code] || <Hospital size={22} />}
+                        <Ticket size={22} />
                       </div>
                       <span
                         className="text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1"
