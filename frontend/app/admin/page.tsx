@@ -259,7 +259,7 @@ export default function AdminDashboard() {
           {[
             { label: 'Public Queue', desc: 'View citizen-facing site', href: '/', icon: <ArrowUpRight size={16} /> },
             { label: 'Staff Login', desc: 'Department staff portal', href: '/staff/login', icon: <Users size={16} /> },
-            { label: 'Analytics', desc: 'Coming soon', href: '#', icon: <TrendingUp size={16} /> },
+            { label: 'Analytics', desc: 'Charts and performance data', href: '/admin/charts', icon: <TrendingUp size={16} /> },
           ].map(link => (
             <Link key={link.label} href={link.href} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3 hover:border-blue-200 hover:bg-blue-50 transition-colors">
               <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 flex-shrink-0">

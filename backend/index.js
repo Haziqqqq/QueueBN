@@ -305,6 +305,60 @@ app.get('/admin/analytics', async (req, res) => {
   }
 })
 
+// GET /admin/charts — analytics data for charts
+app.get('/admin/charts', async (req, res) => {
+  try {
+    // Average wait time per department
+    const avgWait = await db.query(`
+      SELECT d.name, ROUND(AVG(t.wait_mins)) as avg_wait
+      FROM tickets t
+      JOIN departments d ON d.id = t.department_id
+      WHERE t.status = 'done' AND t.wait_mins IS NOT NULL
+      GROUP BY d.name
+      ORDER BY avg_wait DESC
+    `)
+
+    // Tickets served per hour today
+    const perHour = await db.query(`
+      SELECT EXTRACT(HOUR FROM done_at) as hour, COUNT(*) as count
+      FROM tickets
+      WHERE status = 'done' AND joined_at::date = CURRENT_DATE
+      GROUP BY hour
+      ORDER BY hour ASC
+    `)
+
+    // No-show rate per department
+    const noShowRate = await db.query(`
+      SELECT d.name,
+        COUNT(*) FILTER (WHERE t.status = 'no_show') as no_shows,
+        COUNT(*) as total
+      FROM tickets t
+      JOIN departments d ON d.id = t.department_id
+      WHERE t.joined_at::date = CURRENT_DATE
+      GROUP BY d.name
+    `)
+
+    // Last 7 days served count
+    const last7Days = await db.query(`
+      SELECT joined_at::date as date, COUNT(*) as count
+      FROM tickets
+      WHERE status = 'done'
+        AND joined_at >= CURRENT_DATE - INTERVAL '7 days'
+      GROUP BY joined_at::date
+      ORDER BY date ASC
+    `)
+
+    res.json({
+      avgWait: avgWait.rows,
+      perHour: perHour.rows,
+      noShowRate: noShowRate.rows,
+      last7Days: last7Days.rows
+    })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 const PORT = process.env.PORT || 4000
 
 setInterval(async () => {
