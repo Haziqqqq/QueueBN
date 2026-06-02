@@ -351,4 +351,31 @@ setInterval(async () => {
   }
 }, 30000)
 
+// Daily queue reset — runs at midnight
+const resetQueue = async () => {
+  try {
+    await db.query(`
+      UPDATE tickets 
+      SET status = 'expired'
+      WHERE status IN ('waiting', 'called')
+        AND joined_at::date < CURRENT_DATE
+    `)
+    console.log('Daily queue reset complete')
+  } catch (err) {
+    console.error('Queue reset error:', err.message)
+  }
+}
+
+// Check every hour if reset is needed
+setInterval(async () => {
+  const result = await db.query(`
+    SELECT COUNT(*) as count FROM tickets
+    WHERE status IN ('waiting', 'called')
+      AND joined_at::date < CURRENT_DATE
+  `)
+  if (parseInt(result.rows[0].count) > 0) {
+    await resetQueue()
+  }
+}, 3600000)
+
 app.listen(PORT, () => console.log(`QueueBN backend running on port ${PORT}`))

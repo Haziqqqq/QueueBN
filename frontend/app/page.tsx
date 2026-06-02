@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Hospital, Users, Clock, ArrowRight, Smartphone, Bell, MapPin, RefreshCw } from 'lucide-react'
+import { Hospital, Users, Clock, ArrowRight, Smartphone, Bell, MapPin, RefreshCw, Building2, Landmark } from 'lucide-react'
 
 interface Department {
   id: string
@@ -14,15 +14,6 @@ interface Department {
   called_count: string
 }
 
-const deptIcons: Record<string, React.ReactNode> = {
-  OPD: <Hospital size={22} />,
-  SPC: <Hospital size={22} />,
-  PHR: <Hospital size={22} />,
-  LAB: <Hospital size={22} />,
-  RAD: <Hospital size={22} />,
-  EMG: <Hospital size={22} />,
-}
-
 const deptColors: Record<string, { bg: string; color: string; border: string }> = {
   OPD: { bg: '#EFF6FF', color: '#1D4ED8', border: '#BFDBFE' },
   SPC: { bg: '#F5F3FF', color: '#6D28D9', border: '#DDD6FE' },
@@ -30,6 +21,21 @@ const deptColors: Record<string, { bg: string; color: string; border: string }> 
   LAB: { bg: '#FFF7ED', color: '#9A3412', border: '#FED7AA' },
   RAD: { bg: '#FDF4FF', color: '#86198F', border: '#F0ABFC' },
   EMG: { bg: '#FEF2F2', color: '#991B1B', border: '#FECACA' },
+  CST: { bg: '#F0FDF4', color: '#15803D', border: '#BBF7D0' },
+  LAN: { bg: '#FFFBEB', color: '#B45309', border: '#FDE68A' },
+  ACC: { bg: '#EFF6FF', color: '#1D4ED8', border: '#BFDBFE' },
+  PSP: { bg: '#FFF1F2', color: '#BE123C', border: '#FECDD3' },
+  ICR: { bg: '#F0F9FF', color: '#0369A1', border: '#BAE6FD' },
+  VIS: { bg: '#F7FEE7', color: '#3F6212', border: '#D9F99D' },
+  DRV: { bg: '#FFF7ED', color: '#C2410C', border: '#FED7AA' },
+  RTX: { bg: '#F0FDF4', color: '#166534', border: '#BBF7D0' },
+  VRG: { bg: '#FDF4FF', color: '#7E22CE', border: '#E9D5FF' },
+}
+
+const facilityIcon = (facility: string) => {
+  if (facility.toLowerCase().includes('hospital')) return <Hospital size={14} />
+  if (facility.toLowerCase().includes('bank') || facility.toLowerCase().includes('bibd')) return <Landmark size={14} />
+  return <Building2 size={14} />
 }
 
 export default function Home() {
@@ -56,6 +62,12 @@ export default function Home() {
   const totalWaiting = departments.reduce((sum, d) => sum + parseInt(d.waiting_count || '0'), 0)
   const openDepts = departments.filter(d => d.is_open).length
 
+  const grouped = departments.reduce((groups: Record<string, Department[]>, dept) => {
+    if (!groups[dept.facility]) groups[dept.facility] = []
+    groups[dept.facility].push(dept)
+    return groups
+  }, {})
+
   return (
     <div className="min-h-screen bg-slate-50">
 
@@ -69,7 +81,7 @@ export default function Home() {
               </div>
               <div>
                 <div className="text-base font-bold tracking-tight">QueueBN</div>
-                <div className="text-xs text-blue-200">RIPAS Hospital Virtual Queue</div>
+                <div className="text-xs text-blue-200">Brunei Virtual Queue System</div>
               </div>
             </div>
             <Link href="/staff/login" className="text-sm text-blue-200 hover:text-white transition-colors flex items-center gap-1">
@@ -101,7 +113,7 @@ export default function Home() {
       <main className="max-w-5xl mx-auto px-6 py-8">
 
         {/* Section header */}
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-between mb-6">
           <h2 className="text-base font-semibold text-slate-800">Select a Department</h2>
           <button
             onClick={fetchDepartments}
@@ -115,74 +127,95 @@ export default function Home() {
         {loading ? (
           <div className="text-center py-16 text-slate-400 text-sm">Loading departments...</div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
-            {departments.map(dept => {
-              const style = deptColors[dept.code] || { bg: '#F8FAFC', color: '#334155', border: '#E2E8F0' }
-              const waiting = parseInt(dept.waiting_count || '0')
-              const estimatedWait = waiting * dept.avg_service_time_mins
-
-              return (
-                <Link
-                  key={dept.id}
-                  href={dept.is_open ? `/queue/${dept.id}` : '#'}
-                  className={`block rounded-xl border bg-white overflow-hidden transition-all ${dept.is_open ? 'hover:shadow-md hover:-translate-y-0.5 cursor-pointer' : 'opacity-50 cursor-not-allowed pointer-events-none'}`}
-                  style={{ borderColor: style.border }}
-                >
-                  {/* Top accent bar */}
-                  <div className="h-1" style={{ background: style.color }} />
-
-                  <div className="p-5">
-                    <div className="flex items-start justify-between mb-4">
-                      <div
-                        className="w-11 h-11 rounded-lg flex items-center justify-center"
-                        style={{ background: style.bg, color: style.color }}
-                      >
-                        {deptIcons[dept.code] || <Hospital size={22} />}
-                      </div>
-                      <span
-                        className="text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1"
-                        style={{
-                          background: dept.is_open ? '#DCFCE7' : '#FEE2E2',
-                          color: dept.is_open ? '#15803D' : '#DC2626'
-                        }}
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: dept.is_open ? '#16A34A' : '#DC2626' }} />
-                        {dept.is_open ? 'Open' : 'Closed'}
-                      </span>
-                    </div>
-
-                    <div className="text-base font-semibold text-slate-800 mb-0.5">{dept.name}</div>
-                    <div className="text-xs text-slate-400 mb-4">{dept.facility}</div>
-
-                    <div className="grid grid-cols-2 gap-2 mb-4">
-                      <div className="rounded-lg p-3" style={{ background: style.bg }}>
-                        <div className="text-xl font-semibold font-mono" style={{ color: style.color }}>{waiting}</div>
-                        <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                          <Users size={10} /> waiting
-                        </div>
-                      </div>
-                      <div className="rounded-lg p-3 bg-slate-50">
-                        <div className="text-xl font-semibold font-mono text-slate-700">
-                          {waiting === 0 ? '—' : `${estimatedWait}m`}
-                        </div>
-                        <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                          <Clock size={10} /> est. wait
-                        </div>
-                      </div>
-                    </div>
-
-                    {dept.is_open && (
-                      <div
-                        className="w-full py-2.5 rounded-lg text-sm font-medium text-center flex items-center justify-center gap-2 transition-opacity"
-                        style={{ background: style.bg, color: style.color }}
-                      >
-                        Join Queue <ArrowRight size={14} />
-                      </div>
-                    )}
+          <div className="space-y-8 mb-10">
+            {Object.entries(grouped).map(([facility, depts]) => (
+              <div key={facility}>
+                {/* Facility header */}
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-6 h-6 bg-slate-100 rounded-md flex items-center justify-center text-slate-500">
+                    {facilityIcon(facility)}
                   </div>
-                </Link>
-              )
-            })}
+                  <h3 className="text-sm font-semibold text-slate-600">{facility}</h3>
+                  <div className="flex-1 h-px bg-slate-200 ml-2" />
+                  <span className="text-xs text-slate-400">{depts.filter(d => d.is_open).length} open</span>
+                </div>
+
+                {/* Department cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {depts.map(dept => {
+                    const style = deptColors[dept.code] || { bg: '#F8FAFC', color: '#334155', border: '#E2E8F0' }
+                    const waiting = parseInt(dept.waiting_count || '0')
+                    const estimatedWait = waiting * dept.avg_service_time_mins
+
+                    return (
+                      <Link
+                        key={dept.id}
+                        href={dept.is_open ? `/queue/${dept.id}` : '#'}
+                        className={`block rounded-xl border bg-white overflow-hidden transition-all ${
+                          dept.is_open
+                            ? 'hover:shadow-md hover:-translate-y-0.5 cursor-pointer'
+                            : 'opacity-50 cursor-not-allowed pointer-events-none'
+                        }`}
+                        style={{ borderColor: style.border }}
+                      >
+                        <div className="h-1" style={{ background: style.color }} />
+                        <div className="p-5">
+                          <div className="flex items-start justify-between mb-4">
+                            <div
+                              className="w-11 h-11 rounded-lg flex items-center justify-center"
+                              style={{ background: style.bg, color: style.color }}
+                            >
+                              <Hospital size={22} />
+                            </div>
+                            <span
+                              className="text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1"
+                              style={{
+                                background: dept.is_open ? '#DCFCE7' : '#FEE2E2',
+                                color: dept.is_open ? '#15803D' : '#DC2626'
+                              }}
+                            >
+                              <span
+                                className="w-1.5 h-1.5 rounded-full inline-block"
+                                style={{ background: dept.is_open ? '#16A34A' : '#DC2626' }}
+                              />
+                              {dept.is_open ? 'Open' : 'Closed'}
+                            </span>
+                          </div>
+
+                          <div className="text-base font-semibold text-slate-800 mb-4">{dept.name}</div>
+
+                          <div className="grid grid-cols-2 gap-2 mb-4">
+                            <div className="rounded-lg p-3" style={{ background: style.bg }}>
+                              <div className="text-xl font-semibold font-mono" style={{ color: style.color }}>{waiting}</div>
+                              <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                                <Users size={10} /> waiting
+                              </div>
+                            </div>
+                            <div className="rounded-lg p-3 bg-slate-50">
+                              <div className="text-xl font-semibold font-mono text-slate-700">
+                                {waiting === 0 ? '—' : `${estimatedWait}m`}
+                              </div>
+                              <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                                <Clock size={10} /> est. wait
+                              </div>
+                            </div>
+                          </div>
+
+                          {dept.is_open && (
+                            <div
+                              className="w-full py-2.5 rounded-lg text-sm font-medium text-center flex items-center justify-center gap-2"
+                              style={{ background: style.bg, color: style.color }}
+                            >
+                              Join Queue <ArrowRight size={14} />
+                            </div>
+                          )}
+                        </div>
+                      </Link>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
