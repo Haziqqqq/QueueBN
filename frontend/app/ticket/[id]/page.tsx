@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Hospital, Users, Clock, CheckCircle, XCircle, AlertCircle, Hash, Phone, RefreshCw } from 'lucide-react'
+import { ArrowLeft, Ticket as BrandIcon, Users, Clock, CheckCircle, XCircle, AlertCircle, Hash, Phone, RefreshCw } from 'lucide-react'
 
 interface Ticket {
   id: string
@@ -137,7 +137,7 @@ export default function TicketPage() {
               <ArrowLeft size={20} />
             </Link>
             <div className="flex items-center gap-2">
-              <Hospital size={16} className="text-blue-200" />
+              <BrandIcon size={16} className="text-blue-200" />
               <span className="text-sm font-semibold">QueueBN</span>
             </div>
           </div>
@@ -236,8 +236,8 @@ export default function TicketPage() {
           </div>
           <div className="px-5 py-4 flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-slate-500">
-              <Hospital size={12} />
-              Department
+              <BrandIcon size={12} />
+              Queue
             </div>
             <div className="text-sm font-medium text-slate-800">{ticket.department_name}</div>
           </div>

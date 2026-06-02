@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
-  Hospital, Users, Clock, CheckCircle, XCircle,
+  Ticket as BrandIcon, Users, Clock, CheckCircle, XCircle,
   SkipForward, LogOut, RefreshCw, PauseCircle, PlayCircle,
   AlertCircle, Hash
 } from 'lucide-react'
@@ -136,7 +136,7 @@ export default function StaffDashboard() {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Hospital size={18} className="text-white" />
+              <BrandIcon size={18} className="text-white" />
             </div>
             <div>
               <div className="text-sm font-bold text-slate-800">QueueBN Staff</div>

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Users, Clock, Phone, CreditCard, MessageSquare, ArrowRight, Hospital } from 'lucide-react'
+import { ArrowLeft, Users, Clock, Phone, CreditCard, MessageSquare, ArrowRight, Ticket } from 'lucide-react'
 
 interface Department {
   id: string
@@ -78,7 +78,7 @@ export default function JoinQueue() {
             <ArrowLeft size={20} />
           </Link>
           <div className="flex items-center gap-2">
-            <Hospital size={16} className="text-blue-200" />
+            <Ticket size={16} className="text-blue-200" />
             <span className="text-sm font-semibold">QueueBN</span>
           </div>
         </div>
