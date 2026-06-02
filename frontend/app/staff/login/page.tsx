@@ -17,13 +17,16 @@ export default function StaffLogin() {
 
     // Simple hardcoded auth for demo — replace with Supabase Auth later
     const staffAccounts: Record<string, { name: string; department_id: string; department: string; role: string }> = {
-    'service@queuebn.app': { name: 'Customer Service Staff', department_id: '', department: 'Customer Service', role: 'staff' },
-    'billing@queuebn.app': { name: 'Billing Staff', department_id: '', department: 'Billing & Payments', role: 'staff' },
-    'accounts@queuebn.app': { name: 'Account Services Staff', department_id: '', department: 'Account Services', role: 'staff' },
-    'collections@queuebn.app': { name: 'Collections Staff', department_id: '', department: 'Collections & Pickup', role: 'staff' },
-    'enquiries@queuebn.app': { name: 'Enquiries Staff', department_id: '', department: 'General Enquiries', role: 'staff' },
-    'admin@queuebn.app': { name: 'Admin', department_id: '', department: 'all', role: 'admin' },
-    }
+      'opd@ripas.gov.bn': { name: 'OPD Staff', department_id: '', department: 'OPD General', role: 'staff' },
+      'pharmacy@ripas.gov.bn': { name: 'Pharmacy Staff', department_id: '', department: 'Pharmacy', role: 'staff' },
+      'lab@ripas.gov.bn': { name: 'Laboratory Staff', department_id: '', department: 'Laboratory', role: 'staff' },
+      'radiology@ripas.gov.bn': { name: 'Radiology Staff', department_id: '', department: 'Radiology', role: 'staff' },
+      'emergency@ripas.gov.bn': { name: 'Emergency Staff', department_id: '', department: 'Emergency Triage', role: 'staff' },
+      'jpd@jpd.gov.bn': { name: 'JPD Staff', department_id: '', department: 'Driving Licence', role: 'staff' },
+      'immigration@immigration.gov.bn': { name: 'Immigration Staff', department_id: '', department: 'Passport Applications', role: 'staff' },
+      'baiduri@baiduri.com.bn': { name: 'Baiduri Staff', department_id: '', department: 'Customer Service', role: 'staff' },
+      'admin@ripas.gov.bn': { name: 'Admin', department_id: '', department: 'all', role: 'admin' },
+      }
 
     if (password !== 'queuebn2026') {
       setError('Invalid email or password')
@@ -119,7 +122,17 @@ export default function StaffLogin() {
         <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-xl">
           <p className="text-xs font-semibold text-blue-700 mb-2">Demo Accounts (password: queuebn2026)</p>
           <div className="space-y-1">
-            {['service@queuebn.app', 'billing@queuebn.app', 'accounts@queuebn.app', 'collections@queuebn.app', 'enquiries@queuebn.app', 'admin@queuebn.app'].map(acc => (
+            {[
+              'opd@ripas.gov.bn',
+              'pharmacy@ripas.gov.bn',
+              'lab@ripas.gov.bn',
+              'radiology@ripas.gov.bn',
+              'emergency@ripas.gov.bn',
+              'jpd@jpd.gov.bn',
+              'immigration@immigration.gov.bn',
+              'baiduri@baiduri.com.bn',
+              'admin@ripas.gov.bn'
+            ].map(acc => (
               <button
                 key={acc}
                 onClick={() => setEmail(acc)}
